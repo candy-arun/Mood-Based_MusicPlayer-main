@@ -18,8 +18,8 @@ export default function CameraMoodDetector({ onMood, listening, setListening }) 
     async function loadModels() {
       try {
         // loadFromUri('/models') expects your model files to be in public/models/
-        await faceapi.nets.tinyFaceDetector.loadFromUri(import.meta.env.BASE_URL + 'models')
-        await faceapi.nets.faceExpressionNet.loadFromUri(import.meta.env.BASE_URL + 'models')
+        await faceapi.nets.tinyFaceDetector.loadFromUri(import.meta.env.BASE_URL + 'models/')
+        await faceapi.nets.faceExpressionNet.loadFromUri(import.meta.env.BASE_URL + 'models/')
 
         if (!mounted) return
         setModelsLoaded(true)
