@@ -14,12 +14,15 @@ export default function CameraMoodDetector({ onMood, listening, setListening }) 
 
   useEffect(() => {
     let mounted = true
+    const MODEL_URL = import.meta.env.BASE_URL + 'models/'
 
     async function loadModels() {
       try {
-        // loadFromUri('/models') expects your model files to be in public/models/
-        await faceapi.nets.tinyFaceDetector.loadFromUri(import.meta.env.BASE_URL + 'models/')
-        await faceapi.nets.faceExpressionNet.loadFromUri(import.meta.env.BASE_URL + 'models/')
+        await Promise.all([
+          faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+          faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+          faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
+        ])
 
         if (!mounted) return
         setModelsLoaded(true)
@@ -58,7 +61,10 @@ export default function CameraMoodDetector({ onMood, listening, setListening }) 
       detectorInterval.current = setInterval(async () => {
         if (!videoRef.current || videoRef.current.paused || videoRef.current.ended) return
         const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 160, scoreThreshold: 0.5 })
-        const detection = await faceapi.detectSingleFace(videoRef.current, options).withFaceExpressions()
+        const detection = await faceapi
+          .detectSingleFace(videoRef.current, options)
+          .withFaceExpressions()
+
         if (detection && detection.expressions) {
           const entries = Object.entries(detection.expressions)
           entries.sort((a, b) => b[1] - a[1]) // highest first
@@ -81,7 +87,7 @@ export default function CameraMoodDetector({ onMood, listening, setListening }) 
           // no face found -> fallback
           onMood && onMood('relaxed', 0)
         }
-      }, 900) // check roughly every 900ms (tweak for perf)
+      }, 900) // check roughly every 900ms
     }).catch(err => {
       console.error('Camera error:', err)
       alert('Please allow camera access or check browser settings.')
