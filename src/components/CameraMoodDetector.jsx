@@ -14,7 +14,7 @@ export default function CameraMoodDetector({ onMood, listening, setListening }) 
 
   useEffect(() => {
     let mounted = true
-    const MODEL_URL = import.meta.env.BASE_URL + 'models/'
+    const MODEL_URL = '/models/'
 
     async function loadModels() {
       try {
