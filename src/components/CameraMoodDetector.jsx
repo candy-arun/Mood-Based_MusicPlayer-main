@@ -21,7 +21,6 @@ export default function CameraMoodDetector({ onMood, listening, setListening }) 
         await Promise.all([
           faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
           faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
-          faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL),
         ])
 
         if (!mounted) return
